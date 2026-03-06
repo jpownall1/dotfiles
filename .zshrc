@@ -119,7 +119,7 @@ alias act='. ./.venv/bin/activate'
 alias deact='deactivate'
 alias act-env='source .env'
 alias docker-nuke='docker stop $(docker ps -q) 2>/dev/null; docker system prune -af --volumes'
-alias tf='terrafrom'
+alias tf='terraform'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
