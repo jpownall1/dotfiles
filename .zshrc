@@ -77,7 +77,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  zsh-fzf-history-search
+  fzf
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -109,6 +115,11 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias act='. ./.venv/bin/activate'
+alias deact='deactivate'
+alias act-env='source .env'
+alias docker-nuke='docker stop $(docker ps -q) 2>/dev/null; docker system prune -af --volumes'
+alias tf='terrafrom'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
