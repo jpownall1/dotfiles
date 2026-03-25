@@ -125,3 +125,19 @@ alias tf='terraform'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Lazy-load NVM
+lazy_load_nvm() {
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  unset -f nvm node npm npx yarn # Remove the dummy functions
+}
+
+for cmd in nvm node npm npx yarn; do
+  eval "${cmd}() { lazy_load_nvm; ${cmd} \"\$@\"; }"
+done
+
+# Terraform autocomplete
+complete -o nospace -C $(which terraform) terraform
+complete -o nospace -C $(which terraform) tf
