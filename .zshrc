@@ -120,8 +120,93 @@ alias deact='deactivate'
 alias act-env='source .env'
 alias docker-nuke='docker stop $(docker ps -q) 2>/dev/null; docker system prune -af --volumes'
 alias tf='terrafrom'
+find-port-occupier() {
+  sudo lsof -i :"$1" -sTCP:LISTEN
+}
+# Check if an env var is set, and show its value
+check-env() {
+  if [ -z "${1}" ]; then
+    echo "Usage: check-env VAR_NAME"
+    return 1
+  fi
+
+  local var_name="$1"
+  local var_value="${(P)var_name}"
+
+  if [ -z "${var_value+x}" ]; then
+    echo "$var_name is not set"
+  else
+    echo "$var_name=$var_value"
+  fi
+}
+
+# Set an env var in the current shell
+set-env() {
+  if [ -z "${1}" ] || [ -z "${2}" ]; then
+    echo "Usage: set-env VAR_NAME value"
+    return 1
+  fi
+
+  export "$1"="$2"
+  echo "$1 set to '$2'"
+}
+
+# Unset an env var in the current shell
+clear-env() {
+  if [ -z "${1}" ]; then
+    echo "Usage: clear-env VAR_NAME"
+    return 1
+  fi
+
+  local var_name="$1"
+
+  if [ -z "${(P)var_name+x}" ]; then
+    echo "$var_name is already unset"
+  else
+    unset "$var_name"
+    echo "$var_name cleared"
+  fi
+}
+
+git-clear-local-branches() {
+  local current default_branch
+  current=$(git rev-parse --abbrev-ref HEAD)
+
+  # Try to detect the actual default branch (main/master/whatever) from origin
+  default_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+
+  # Fallback if origin/HEAD isn't set locally
+  if [[ -z "$default_branch" ]]; then
+    if git show-ref --verify --quiet refs/heads/main; then
+      default_branch="main"
+    elif git show-ref --verify --quiet refs/heads/master; then
+      default_branch="master"
+    fi
+  fi
+
+  echo "Current branch: $current"
+  echo "Default branch: $default_branch"
+
+  git branch | grep -v "^\*" | sed 's/^ *//' | while read -r branch; do
+    if [[ "$branch" != "$current" && "$branch" != "$default_branch" ]]; then
+      echo "Deleting: $branch"
+      git branch -D "$branch"
+    fi
+  done
+}
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# bun completions
+[ -s "/home/jordanpownall/.bun/_bun" ] && source "/home/jordanpownall/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
