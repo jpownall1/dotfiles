@@ -124,9 +124,9 @@ find-port-occupier() {
   sudo lsof -i :"$1" -sTCP:LISTEN
 }
 # Check if an env var is set, and show its value
-check-env() {
+env-check() {
   if [ -z "${1}" ]; then
-    echo "Usage: check-env VAR_NAME"
+    echo "Usage: env-check VAR_NAME"
     return 1
   fi
 
@@ -141,9 +141,9 @@ check-env() {
 }
 
 # Set an env var in the current shell
-set-env() {
+env-set() {
   if [ -z "${1}" ] || [ -z "${2}" ]; then
-    echo "Usage: set-env VAR_NAME value"
+    echo "Usage: env-set VAR_NAME value"
     return 1
   fi
 
@@ -152,9 +152,9 @@ set-env() {
 }
 
 # Unset an env var in the current shell
-clear-env() {
+env-clear() {
   if [ -z "${1}" ]; then
-    echo "Usage: clear-env VAR_NAME"
+    echo "Usage: env-clear VAR_NAME"
     return 1
   fi
 
