@@ -119,7 +119,7 @@ alias act='. ./.venv/bin/activate'
 alias deact='deactivate'
 alias act-env='source .env'
 alias docker-nuke='docker stop $(docker ps -q) 2>/dev/null; docker system prune -af --volumes'
-alias tf='terrafrom'
+alias tf='terraform'
 find-port-occupier() {
   sudo lsof -i :"$1" -sTCP:LISTEN
 }
@@ -200,9 +200,17 @@ git-clear-local-branches() {
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Lazy-load NVM
+lazy_load_nvm() {
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  unset -f nvm node npm npx yarn # Remove the dummy functions
+}
+
+for cmd in nvm node npm npx yarn; do
+  eval "${cmd}() { lazy_load_nvm; ${cmd} \"\$@\"; }"
+done
 
 # bun completions
 [ -s "/home/jordanpownall/.bun/_bun" ] && source "/home/jordanpownall/.bun/_bun"
@@ -210,3 +218,7 @@ export NVM_DIR="$HOME/.nvm"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Terraform autocomplete
+complete -o nospace -C $(which terraform) terraform
+complete -o nospace -C $(which terraform) tf
