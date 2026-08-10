@@ -222,3 +222,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # Terraform autocomplete
 complete -o nospace -C $(which terraform) terraform
 complete -o nospace -C $(which terraform) tf
+
+
+. "$HOME/.local/bin/env"
